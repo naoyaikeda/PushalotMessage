@@ -13,9 +13,24 @@
 #    limitations under the License.
 
 function Send-PushalotMessage {
-    Param($authToken, $message)
+    param(
+        [parameter(Mandatory=$true)]$authToken,
+        [parameter(Mandatory=$true)]$message,
+        [parameter(Mandatory=$true)]$title
+    )
     $endPoint = "https://pushalot.com/api/sendmessage"
+    $bodyObj = @{AuthorizationToken=$authToken}
 
-    $result = Invoke-RestMethod -Uri $endPoint -Method Post -Body @{AuthorizationToken=$authToken;Body=$message}
+    if($message -ne $null)
+    {
+        $bodyObj.Add("body", $message)
+    }
+
+    if($title -ne $null)
+    {
+        $bodyObj.Add("title", $title)
+    }
+
+    $result = Invoke-RestMethod -Uri $endPoint -Method Post -Body $bodyObj
     $result
 }
